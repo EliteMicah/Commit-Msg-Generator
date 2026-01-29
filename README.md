@@ -3,7 +3,7 @@ Uses Ollama Qwen2.5:7b to generate a commit message based on the .diff. Very han
 
 Everything is local. Never leaves your machine.
 
-Must be running Ollama and have the correct model: 
+Script opens Ollama but make sure you have the correct model: 
 
 ollama run qwen2.5:7b
 
