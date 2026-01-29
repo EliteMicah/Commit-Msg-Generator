@@ -7,10 +7,27 @@ if [[ $# -ne 1 ]]; then
   exit 1
 fi
 
-# Check if Ollama is running
+# Check if Ollama is running, start it if not
 if ! curl -s --max-time 2 http://localhost:11434/api/tags > /dev/null 2>&1; then
-  echo "Error: Ollama is not running. Please start Ollama first." >&2
-  exit 1
+  echo "Ollama is not running. Starting Ollama..."
+  
+  # Start Ollama in the background
+  ollama serve > /dev/null 2>&1 &
+  
+  # Wait for Ollama to be ready (max 10 seconds)
+  for i in {1..10}; do
+    if curl -s --max-time 1 http://localhost:11434/api/tags > /dev/null 2>&1; then
+      echo "Ollama started successfully."
+      break
+    fi
+    sleep 1
+  done
+  
+  # Final check
+  if ! curl -s --max-time 2 http://localhost:11434/api/tags > /dev/null 2>&1; then
+    echo "Error: Failed to start Ollama." >&2
+    exit 1
+  fi
 fi
 
 ROOT_DIR="$1"
